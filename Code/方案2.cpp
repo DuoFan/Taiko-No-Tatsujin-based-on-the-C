@@ -9,7 +9,7 @@
 #define Dot 10
 #define Percent 11
 
-//定义滑条的结构
+//滑条的结构定义
 typedef struct _Slider {
 
 	int width = 410;
@@ -19,7 +19,7 @@ typedef struct _Slider {
 	IMAGE fail;//当漏击时的素材
 }_Slider;
 
-//定义长条的结构
+//长条的结构定义
 typedef struct _Bar {
 
 	int y = 214;
@@ -46,7 +46,7 @@ typedef struct _Bar {
 	IMAGE outerRight_mask;
 }_Bar;
 
-//定义判定的结构
+//判定的结构定义
 typedef struct _Judge {
 	
 	//判定点的显示位置
@@ -64,7 +64,7 @@ typedef struct _Judge {
 	IMAGE hit100_Mask;
 }_Judge;
 
-//定义小人的结构
+//小人的结构定义
 typedef struct _Don {
 	
 	//显示位置
@@ -424,7 +424,7 @@ void UpdateWithoutInput() {
 		Update_Don();
 	}
 	
-	//如果当前
+	//如果当前的连击数等于下一次变化对应的数，等于
 	if (ScoreBoard.current_Changed == ScoreBoard.next_Change)
 		GetComboLength();
 }
