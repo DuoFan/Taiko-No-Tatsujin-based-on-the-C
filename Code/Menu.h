@@ -6,14 +6,14 @@
 #define Width 0
 #define Height 1
 
-//定义初始设置的结构
+//初始设置的结构定义
 typedef struct _Setting {
 
 	int resolution[2]{ 1024,768 }; 
 	IMAGE backGround;
 }_Setting;
 
-//定义光标的结构
+//光标的结构定义
 typedef struct _Cursor {
 
 	int x;
@@ -22,7 +22,7 @@ typedef struct _Cursor {
 	IMAGE img;
 }_Cursor;
 
-//定义分数的数字结构
+//分数的数字的结构定义
 typedef struct _Score_Number {
 
 	int x;
@@ -30,7 +30,7 @@ typedef struct _Score_Number {
 	int value;
 }_Score_Number;
 
-//定义分数板结构
+//分数板的结构定义
 typedef struct _ScoreBoard {
 
 	int combo;//当前连击数
