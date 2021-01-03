@@ -1,0 +1,9 @@
+..\Music\YuugennoRan\Music.mp3 
+Yuu gen no Ran
+Zeami
+..\Music\YuugennoRan\Note.txt
+..\Music\YuugennoRan\Image.png
+7.63
+1263 2
+150 160 1.00
+16650 300 1.00

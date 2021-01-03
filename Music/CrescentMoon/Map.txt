@@ -1,0 +1,8 @@
+..\Music\CrescentMoon\Music.mp3 
+Crescent Moon
+FELT
+..\Music\CrescentMoon\Note.txt
+..\Music\CrescentMoon\Image.jpg
+3.88
+961 1
+1262 187 1.00
