@@ -24,7 +24,7 @@ static int time = 0;
 int Status = 0; //0为开始界面，1为选歌界面，2为游戏界面，3为结算界面
 int current = 0;//当前的谱面号码
 int musicAddress_Length;
-int* Chosen = (int*)malloc(sizeof(int)); //分配一个int空间
+int* Chosen = (int*)malloc(sizeof(int)); //分配一个int空间,用来传递所选定的谱面编号
 
 char* temp_Address;//临时地址
 char Input;//输入
