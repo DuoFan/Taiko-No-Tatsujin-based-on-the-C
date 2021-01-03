@@ -424,7 +424,8 @@ void UpdateWithoutInput() {
 		Update_Don();
 	}
 	
-	//如果当前的连击数等于下一次变化对应的数，跟新连击数的长度
+	//如果当前连击数等于下一次连击数值长度变化对应的值
+	//则更新连击数长度
 	if (ScoreBoard.combo == ScoreBoard.next_Change)
 		GetComboLength();
 }
@@ -445,7 +446,8 @@ void Auto_Update() {
 		Update_Don();
 	}
 
-	
+	//如果当前连击数等于下一次连击数值长度变化对应的值
+	//则更新连击数长度
 	if (ScoreBoard.combo == ScoreBoard.next_Change)
 		GetComboLength();
 }
@@ -599,7 +601,7 @@ void Initialize_ScoreBoard() {
 
 	ScoreBoard.combo = 0;
 	ScoreBoard.max_Combo = 0;
-	ScoreBoard.next_Change = 10;//设置下一次连击长度改变所需的增长值为10
+	ScoreBoard.next_Change = 10;//设置下一次连击长度改变所对应的值为10
 	ScoreBoard.combo_Length = 1;//设置连击长度为1
 	ScoreBoard.max_Combo_Length = 1;
 	ScoreBoard.accuracy = 0;
@@ -673,7 +675,10 @@ void Act_Note() {
 	}
 }
 
-//若当前经过的时间大于站点，则站点等于
+//若当前经过的时间大等于站点，则站点等于当前的时间加2ms
+//从当前的音符开始，到最后一个音符，若该音符已被使能，则减去两倍的自身速度，否则退出循环
+//若该音符的位置小等于181，则当前的音符编号加一
+//之所以是181，是因为181是除了最后一个音符外，其余所有音符能被允许显示的最左位置
 void Note_Move() {
 
 	if (passed_Mileseconds >= station) {
@@ -691,13 +696,17 @@ void Note_Move() {
 	}
 }
 
+//在必要时给出判定，最后一个音符和其余音符的处理不同
 void Put_Judge() {
-
+	
+	//若当前音符是最后一个音符时，如果其位置小等于某个判定等级的时间
+	//以及大等于该判定等级时间的负数，同时该音符的类型与输入类型一致
+	//则令当前连击数加一，得到本次判定的时间点和判定类型，用于绘制判定图案
+	//小人的状态置为空闲，对应击中的判定等级数加一，并更新准确度
 	if (current_Note == Map[*Chosen].note_Number && !isEnd) {
 		if (Map[*Chosen].note[current_Note].timing <= Judge.hit_great &&
 			Map[*Chosen].note[current_Note].timing >= -Judge.hit_great 
 			&& currentHit == Map[*Chosen].note[current_Note].color) {
-			currentHit = 0;
 			ScoreBoard.combo++;
 			GetLocalTime(&current_Time);
 			Judge.hit_time = ((current_Time.wMinute * 60 + current_Time.wSecond) * 1000 + current_Time.wMilliseconds)
@@ -706,7 +715,6 @@ void Put_Judge() {
 			Don.status = 0;
 			ScoreBoard.hit300++;
 			Update_Accuarcy();
-			ScoreBoard.current_Changed++;
 		}
 		else if (Map[*Chosen].note[current_Note].timing <= Judge.hit_normal &&
 			Map[*Chosen].note[current_Note].timing >= -Judge.hit_normal
@@ -719,8 +727,9 @@ void Put_Judge() {
 			Don.status = 0;
 			ScoreBoard.hit100++;
 			Update_Accuarcy();
-			ScoreBoard.current_Changed++;
 		}
+		//如果当前的音符位置小于-190，则表示没有击中，小人的状态置为漏击
+		//漏击数加一。更新准确度，最大连击数，将当前连击数置零
 		else if (Map[*Chosen].note[current_Note].timing <= -190) {
 			Don.status = -1;
 			ScoreBoard.hitMiss++;
@@ -729,6 +738,10 @@ void Put_Judge() {
 			ComboSetZero();
 		}
 	}
+	//若当前音符不是最后一个音符时，如果其位置小等于231加上某个判定等级的时间
+	//以及大等于231减去该判定等级时间，同时该音符的类型与输入类型一致
+	//则令当前连击数加一，得到本次判定的时间点和判定类型，用于绘制判定图案
+	//小人的状态置为空闲，对应击中的判定等级数加一，并更新准确度
 	if (current_Note < Map[*Chosen].note_Number) {
 		if (Map[*Chosen].note[current_Note].timing <= 231 + Judge.hit_great &&
 			Map[*Chosen].note[current_Note].timing >= 231 - Judge.hit_great
@@ -742,7 +755,7 @@ void Put_Judge() {
 			Don.status = 0;
 			ScoreBoard.hit300++;
 			Update_Accuarcy();
-			ScoreBoard.current_Changed++;
+
 		}
 		else if (Map[*Chosen].note[current_Note].timing <= 231 + Judge.hit_normal &&
 			Map[*Chosen].note[current_Note].timing >= 231 - Judge.hit_normal
@@ -756,8 +769,9 @@ void Put_Judge() {
 			Don.status = 0;
 			ScoreBoard.hit100++;
 			Update_Accuarcy();
-			ScoreBoard.current_Changed++;
 		}
+		//如果当前的音符位置小于190，则表示没有击中，小人的状态置为漏击
+		//漏击数加一。更新准确度，最大连击数，将当前连击数置零
 		else if (Map[*Chosen].note[current_Note].timing <= 190) {
 				current_Note++;
 			Don.status = -1;
@@ -767,9 +781,11 @@ void Put_Judge() {
 			ComboSetZero();
 		}
 	}
+	//重置输入类型
 	currentHit = 0;
 }
 
+//用于自动演奏时给出判定，因为是自动演奏，所以不需要判断输入类型，另外自动演奏只有最高级判定和漏击
 void Auto_Put_Judge() {
 
 	if (current_Note == Map[*Chosen].note_Number && !isEnd) {
@@ -787,7 +803,6 @@ void Auto_Put_Judge() {
 			Don.status = 0;
 			ScoreBoard.hit300++;
 			Update_Accuarcy();
-			ScoreBoard.current_Changed++;
 		}
 		else if (Map[*Chosen].note[current_Note].timing <= -190) {
 			Don.status = -1;
@@ -814,7 +829,6 @@ void Auto_Put_Judge() {
 			Don.status = 0;
 			ScoreBoard.hit300++;
 			Update_Accuarcy();
-			ScoreBoard.current_Changed++;
 		}
 		else if (Map[*Chosen].note[current_Note].timing <= 190) {
 			current_Note++;
@@ -827,8 +841,10 @@ void Auto_Put_Judge() {
 	}
 }
 
+//用于更新当前时间点，而后更新小人的动作频率
 void Update_Current_Timing() {
-
+	
+	//若当前音符的开始时间大于当前时间点的值，则执行更新，并把当前时间点编号加一
 	if (Map[*Chosen].note[current_Note].start >
 		Map[*Chosen].timing[current_Timing].value
 		&& current_Timing < Map[*Chosen].timing_Number) {
@@ -838,17 +854,23 @@ void Update_Current_Timing() {
 }
 
 void Update_Don_Frequency() {
-
+	
+	//当前小人的动作频率是60除以当前时间点的真实bpm并乘以1000
+	//之所以要乘以1000，是为了将其单位转成毫秒
 	Don.frequency = 60 / (Map[*Chosen].timing[current_Timing].bpm
 		* Map[*Chosen].timing[current_Timing].factor) * 1000;
 }
 
+//更新准确度
 void Update_Accuarcy() {
-
+	
+	//准确度计算公式为:当前各个判断等级的数量乘以各自的权重后相加，最后除以当前的音符编号，也即当前经过的音符数
 	ScoreBoard.accuracy = ((ScoreBoard.hit300 * ScoreBoard.max_Weight) +
 		(ScoreBoard.hit100 * ScoreBoard.half_Weight) +
 		(ScoreBoard.hitMiss * ScoreBoard.miss_Weight)) / current_Note;
-
+	
+	//如果准确度等于100，则准确度值的长度为5，否则准确度破坏标志置真，准确度值长度为4
+	//如果准确度被破坏，则退出，不做后续判断
 	if (ScoreBoard.accuracy_Break)
 		return;
 	if (ScoreBoard.accuracy == 100)
@@ -860,9 +882,9 @@ void Update_Accuarcy() {
 }
 
 void Update_MaxCombo() {
-
-	if (isEnd)
-		int K = 0;
+	
+	//如果当前的连击数大于最大连击数，则最大连击数等于当前连击数
+	//最大连击数值的长度等于当前连击数值的长度
 	if (ScoreBoard.combo > ScoreBoard.max_Combo) {
 		ScoreBoard.max_Combo = ScoreBoard.combo;
 		ScoreBoard.max_Combo_Length = ScoreBoard.combo_Length;
@@ -871,22 +893,33 @@ void Update_MaxCombo() {
 
 void ComboSetZero() {
 
+	//将当前连击数置0，长度置1，下一次变化对应值置10
 	ScoreBoard.combo = 0;
 	ScoreBoard.combo_Length = 1;
 	ScoreBoard.next_Change = 10;
-	ScoreBoard.current_Changed = 0;
 }
 
 void Update_Don() {
 
+	//如果当前经过的时间减去下一次小人绘制时间大于等于小人的动作频率
+	//则更新小人动作，并更新下一次绘制时间
+	//之所以加2，是因为把掩码图和普通图片放在一个数组里，并且相邻着
 	if (passed_Mileseconds - Don.next_Draw >= Don.frequency) {
 		Don.next_Action += 2;
 		Don.next_Draw = GetActualTime();
 	}
 }
 
+//用于更新当前连击数的长度，因为实际游玩时连击数的位数可能变动较多
+//所以专门写了个处理函数
 void GetComboLength() {
 
+	//动态分配临时变量的空间等于当前连击数的空间
+	//让临时变量指向当前记分板的number成员
+	//number成员是用来正确显示连击数各个位的数字
+	//让当前的连击数值的长度加一
+	//更新下一次变化对应的值
+	//重新为number分配更大一位的空间，并释放之前的空间
 	_Score_Number* temp = (_Score_Number*)malloc(sizeof(_Score_Number) * ScoreBoard.combo_Length);
 	temp = ScoreBoard.number;
 	ScoreBoard.combo_Length++;
@@ -897,7 +930,8 @@ void GetComboLength() {
 
 
 void Draw_Slider() {
-
+	
+	//根据小人的状态来绘制滑条，若空闲则绘制彩色，若漏击则绘制黑色
 	switch (Don.status) {
 	case -1:
 		for (int i = 0; i < Slider_Number; i++)
@@ -919,10 +953,15 @@ void Draw_Bar() {
 
 void Draw_Combo() {
 
+	//在对应的位置绘制当前连击数的每一位数字
+	//临时遍量temp用于为每一位数字找到正确的指数
+	//interval是用于计算每个数字间的间隔
+	//之所以是150，是因为留给绘制连击的空间只有150像素宽
 	int temp;
 	int interval = 150 / (ScoreBoard.combo_Length + 1);
 	for (int i = 0; i < ScoreBoard.combo_Length; i++) {
 		temp = ScoreBoard.combo_Length - i - 1;
+		//计算每一位数字的数值以及对应的x轴位置，并绘制
 		ScoreBoard.number[i].value = (int)(ScoreBoard.combo / pow(10, temp)) % 10;
 		ScoreBoard.number[i].x = 10 + (i + 1) * interval - 20;
 		putimage(ScoreBoard.number[i].x, 290, &number_Mask[ScoreBoard.number[i].value], NOTSRCERASE);
@@ -930,6 +969,7 @@ void Draw_Combo() {
 	}
 }
 
+//绘制准确度与绘制连击数大致相同
 void Draw_Accuarcy() {
 
 	int temp_X, temp_Value, temp;
@@ -952,7 +992,8 @@ void Draw_Accuarcy() {
 }
 
 void Draw_Note() {
-
+	//从当前的音符到最后一个音符，若某个音符被使能，则在屏幕上将其绘制
+	//根据颜色的不同绘制不同的素材
 	for (int i = current_Note; i < Map[*Chosen].note_Number; i++) {
 		if (Map[*Chosen].note[i].act) {
 			putimage(Map[*Chosen].note[i].timing, note_y, &normal, NOTSRCERASE);
@@ -965,7 +1006,10 @@ void Draw_Note() {
 }
 
 void Draw_Don() {
-
+	
+	//根据小人的状态绘制小人的动作
+	//空闲动作有六种，漏击动作有两种，每种各有掩码和图片
+	//在绘制前如果所要绘制的下一个动作超出数组范围，则将其置0
 	switch (Don.status) {
 	case -1:
 		if (Don.next_Action >= 4)
@@ -982,6 +1026,7 @@ void Draw_Don() {
 	}
 }
 
+//根据判断类型绘制判定
 void DrawJudge(int type) {
 
 	if (type == 1) {
@@ -995,6 +1040,7 @@ void DrawJudge(int type) {
 	}
 }
 
+//根据输入类型绘制对应的按键
 void DrawHit(int hit) {
 
 	switch (hit) {
@@ -1018,8 +1064,11 @@ void DrawHit(int hit) {
 }
 
 
+//结束函数
 void End() {
-
+	
+	//若当前的音符编号以及大等于音符数，说明谱面结束
+	//将结束标识符置真，倒计时1000次循环，小人的状态置为空闲
 	if (current_Note >= Map[*Chosen].note_Number) {
 		if (!isEnd)
 			isEnd = true;
@@ -1027,6 +1076,8 @@ void End() {
 			count_Down = 1000;
 		Don.status = 0;
 		count_Down--;
+		//当倒计时结束后则作收尾处理
+		//得到每个判定等级的数量，并根据准确度得到评价等级
 		if (count_Down <= 0) {
 			Get_Hit_Length();
 			/*if (ScoreBoard.max_Combo < ScoreBoard.combo) {
@@ -1039,10 +1090,14 @@ void End() {
 				ScoreBoard.hitMiss = 0;
 			}*/
 			Get_Rank();
+			//将所有音符的当前时间点设置为对应的开始时间点，并置否
 			for (int i = 0; i < Map[*Chosen].note_Number; i++) {
 				Map[*Chosen].note[i].timing = Map[*Chosen].note[i].start;
 				Map[*Chosen].note[i].act = false;
 			}
+			//小人的下一次绘制时间置0，频率置0
+			//当前音符编号置零，当前时间点编号置零
+			//开始标识置真，状态转为3(结算菜单)
 			Don.next_Draw = 0;
 			Don.frequency = 0;
 			current_Note = 0;
@@ -1054,6 +1109,7 @@ void End() {
 	}
 }
 
+//这里采用比较简单的处理，理论上是够用了
 void Get_Hit_Length() {
 
 	if (ScoreBoard.hit300 < 10) {
@@ -1105,6 +1161,7 @@ void Get_Hit_Length() {
 	}
 }
 
+//根据准确度和是否断连给出对应的评价等级
 void Get_Rank() {
 
 	if (ScoreBoard.accuracy > 99.99 &&
