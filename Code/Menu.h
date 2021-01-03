@@ -38,7 +38,6 @@ typedef struct _ScoreBoard {
 	int max_Combo;//最大连击数
 	int max_Combo_Length;
 	int next_Change;//下一次的连击数长度改变值
-	int current_Changed;
 	int accuracy_Length;//精确度长度
 	int hit300;//满判定数量
 	int hit300_Length;//满判定长度
