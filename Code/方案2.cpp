@@ -424,8 +424,8 @@ void UpdateWithoutInput() {
 		Update_Don();
 	}
 	
-	//如果当前的连击数等于下一次变化对应的数，等于
-	if (ScoreBoard.current_Changed == ScoreBoard.next_Change)
+	//如果当前的连击数等于下一次变化对应的数，跟新连击数的长度
+	if (ScoreBoard.combo == ScoreBoard.next_Change)
 		GetComboLength();
 }
 
@@ -446,12 +446,13 @@ void Auto_Update() {
 	}
 
 	
-	if (ScoreBoard.current_Changed == ScoreBoard.next_Change)
+	if (ScoreBoard.combo == ScoreBoard.next_Change)
 		GetComboLength();
 }
 
 void UpdateWithInput() {
 
+	//四个按键分别是W,E,7,8，按下后根据位置和颜色得到值，播放对应的音效，得到输入的时间点，并限制该键的输入，防止过度响应
 	if (GetAsyncKeyState(69) & 0x8000 && canInput[0]) {
 		currentHit = 1;
 		drawHit = 1;
@@ -502,11 +503,12 @@ void First() {
 	Initialize_Key();
 	Initialize_Don();
 	Initialize_ScoreBoard();
-	count_Down = 500;
+	count_Down = 500;//500次循环的倒计时
 	isEnd = false;
 	first = false;
 }
 
+//初始化四个滑条的x轴位置，并记录第四个滑条的x轴位置为最后的滑条位置
 void Initialize_Slider() {
 
 	for (int i = 0; i < Slider_Number; i++) {
@@ -518,6 +520,7 @@ void Initialize_Slider() {
 	}
 }
 
+//初始化当前谱面的所有音符
 void Initialize_Note() {
 
 	int i;
