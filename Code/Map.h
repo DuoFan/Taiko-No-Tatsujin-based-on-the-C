@@ -1,6 +1,6 @@
 #pragma once
 #include<graphics.h>
-#define Number_Map 5
+#define Number_Map 5 //所有谱面数量
 
 //时间点的结构定义
 typedef struct _Timing {
