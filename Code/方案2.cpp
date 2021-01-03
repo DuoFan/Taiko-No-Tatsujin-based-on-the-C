@@ -520,37 +520,41 @@ void Initialize_Slider() {
 	}
 }
 
-//初始化当前谱面的所有音符
+//初始化当前谱面的所有音符的各个数值，是关键函数
 void Initialize_Note() {
 
 	int i;
-	isPlay = false;
-	note_Speed = 1;
-	current_Note = 0;
-	current_Timing = 0;
-	float tempFactor;
+	isPlay = false;//设置游玩标志位为否，防止过早开始游戏
+	note_Speed = 1;//100bpm时的标准速度，每次更新移动一个像素点
+	current_Note = 0;//将当前的音符编号设为0
+	current_Timing = 0;//将当前的时间点编号设为0
+	float tempFactor;//临时的因数变量
+	//遍历当前所选谱面的所有音符
 	for (i = 0; i < Map[*Chosen].note_Number; i++) {
-		Map[*Chosen].note[i].start = Map[*Chosen].note[i].timing;
+		Map[*Chosen].note[i].start = Map[*Chosen].note[i].timing;//将音符所处的时间点赋给各自的开始时间，以便后续使用
 		/*if (Map[*Chosen].note[i].start <= 1024)
 			Map[*Chosen].note[i].act = true;
 		else*/
-			Map[*Chosen].note[i].act = false;
-		Search_Timing(i);
+			Map[*Chosen].note[i].act = false;//将所有音符行动置否
+		Search_Timing(i);//从第i号时间点开始寻找合适的时间点
+		//若当前时间点已经是最后的时间点，以及当前音符的开始时间等于该时间点或在其之后，则做对应的处理
 		if (current_Timing >= Map[*Chosen].timing_Number - 1
 			&& Map[*Chosen].note[i].start >= Map[*Chosen].timing[current_Timing].value) {
 			tempFactor = ((Map[*Chosen].timing[current_Timing].bpm *
-				Map[*Chosen].timing[current_Timing].factor) / 200);
-			Map[*Chosen].note[i].speed = note_Speed * tempFactor;
-			if(isAuto)
-				Map[*Chosen].note[i].offset = 1024 / Map[*Chosen].note[i].speed;
-			else
-				Map[*Chosen].note[i].offset = 1024 / Map[*Chosen].note[i].speed;
+				Map[*Chosen].timing[current_Timing].factor) / 200);//当前时间点的bpm乘以乘算因数，并除以200，得到临时的乘算因数
+			//之所以是200是因为每2ms更新一次音符位置，标准速度1所对应的bpm是100，所以这里要除以200
+			//如果是每x秒更新一次音符位置，则要除以x*100
+			Map[*Chosen].note[i].speed = note_Speed * tempFactor;//将标准速度乘以临时因数，即是每个音符自己的速度
+				Map[*Chosen].note[i].offset = 1024 / Map[*Chosen].note[i].speed;//设置每个音符的延迟，也即是提早显示的时间
+			//因为音符需要在屏幕上显示一段时间后才能到达判定点被击中，所以需要提早显示
+			//1024是屏幕的宽度，之所以除以该音符的速度是为了求得该音符在屏幕中应该显示的时长
 		}
 	}
-	current_Timing = 0;
-	station = 0;
+	current_Timing = 0;//重新设置当前时间点为0，供更新小人使用
+	station = 0;//设置时间站点为0
 }
 
+//用于让当前的音符能正确的找到对应的时间点，其余功能与音符初始化内的大致相同
 void Search_Timing(int i) {
 
 	if (current_Timing < Map[*Chosen].timing_Number - 1
@@ -575,40 +579,39 @@ void Search_Timing(int i) {
 
 void Initialize_Judge() {
 
-	Judge.hit_time = 0;
+	Judge.hit_time = 0;//设置当前判定时间为0
 }
 
 void Initialize_Key() {
 
 	for (int i = 0; i < 4; i++)
-		canInput[i] = true;
+		canInput[i] = true;//初始化4个按键为可输入
 }
 
 void Initialize_Don() {
 
-	Don.next_Action = 0;
-	Don.next_Draw = 0;
-	Don.status = 0;
+	Don.next_Action = 0;//设置小人的下一个动作是第0号动作
+	Don.next_Draw = 0;//设置下一次绘制时间是0
+	Don.status = 0;//设置小人状态为空闲
 }
 
 void Initialize_ScoreBoard() {
 
 	ScoreBoard.combo = 0;
-	ScoreBoard.current_Changed = 0;
 	ScoreBoard.max_Combo = 0;
-	ScoreBoard.next_Change = 10;
-	ScoreBoard.combo_Length = 1;
+	ScoreBoard.next_Change = 10;//设置下一次连击长度改变所需的增长值为10
+	ScoreBoard.combo_Length = 1;//设置连击长度为1
 	ScoreBoard.max_Combo_Length = 1;
 	ScoreBoard.accuracy = 0;
 	ScoreBoard.accuracy_Length = 4;
-	ScoreBoard.number = (_Score_Number*)malloc(sizeof(ScoreBoard.number) * ScoreBoard.combo_Length);
+	ScoreBoard.number = (_Score_Number*)malloc(sizeof(ScoreBoard.number) * ScoreBoard.combo_Length);//根据连击长度分配number的大小，以便显示连击数使用
 	ScoreBoard.hit300 = 0;
 	ScoreBoard.hit300_Length = 1;
 	ScoreBoard.hit100 = 0;
 	ScoreBoard.hit100_Length = 1;
 	ScoreBoard.hitMiss = 0;
 	ScoreBoard.hitMiss_Length = 1;
-	ScoreBoard.accuracy_Break = false;
+	ScoreBoard.accuracy_Break = false;//设置准确度破坏为假
 }
 
 void PlayMusic() {
@@ -622,6 +625,7 @@ void PlayMusic() {
 void Count_Down() {
 
 	count_Down--;
+	//当倒计时小等于0时播放对应音乐，并真正开始游戏
 	if (count_Down <= 0 && !isPlay) {
 		PlayMusic();
 		isPlay = true;
@@ -629,6 +633,7 @@ void Count_Down() {
 	}
 }
 
+//在防止过度响应后，如果四个按键中的某个被松开，则可再次输入
 void ReleaseKey() {
 
 	if (!(GetAsyncKeyState(69) & 0x8000))
@@ -641,6 +646,7 @@ void ReleaseKey() {
 		canInput[3] = true;
 }
 
+//左移各个滑条的x轴位置，如果有某个滑条移出屏幕，则让其回到最后一个滑条的位置上
 void Slider_Move() {
 
 	for (int i = 0; i < Slider_Number; i++) {
@@ -650,6 +656,8 @@ void Slider_Move() {
 	}
 }
 
+//从当前的音符开始，到最后一个音符，如果当前经过的时间大等于某个音符的开始时间减去偏移量，则将其使能，并置于屏幕最右端，准备显示
+//如果该音符已被使能则跳过，如果有某个音符不符合条件则退出循环，因为在其之后的音符肯定也不符合条件
 void Act_Note() {
 
 	for (int i = current_Note; i < Map[*Chosen].note_Number; i++) {
@@ -665,6 +673,7 @@ void Act_Note() {
 	}
 }
 
+//若当前经过的时间大于站点，则站点等于
 void Note_Move() {
 
 	if (passed_Mileseconds >= station) {
