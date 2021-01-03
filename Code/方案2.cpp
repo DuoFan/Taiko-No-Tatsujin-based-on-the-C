@@ -5,23 +5,26 @@
 #include"Menu.h"
 #include"Map.h"
 
-#define Slider_Number 4
+#define Slider_Number 4 //总共四个滑条
 #define Dot 10
 #define Percent 11
 
+//定义滑条的结构
 typedef struct _Slider {
 
 	int width = 410;
-	int speed = 2;
+	int speed = 2;//移动速度，每次循环移动两个像素点
 	int x;
-	IMAGE hit;
-	IMAGE fail;
+	IMAGE hit;//当击中时的素材
+	IMAGE fail;//当漏击时的素材
 }_Slider;
 
+//定义长条的结构
 typedef struct _Bar {
 
 	int y = 214;
-	int bar_X = 181;
+	int bar_X = 181;//长条的x轴位置
+	//内部和外部的左右侧四个键各自的x，y轴位置
 	int innerLeft_X = 31;
 	int innerLeft_Y = y + 47;
 	int innerRight_X = 31 + 54;
@@ -30,6 +33,7 @@ typedef struct _Bar {
 	int outerLeft_Y = y + 32;
 	int outerRight_X = 15 + 70;
 	int outerRight_Y = y + 32;
+	//对应的素材
 	IMAGE bar;
 	IMAGE drum;
 	IMAGE innerLeft;
@@ -42,14 +46,17 @@ typedef struct _Bar {
 	IMAGE outerRight_mask;
 }_Bar;
 
+//定义判定的结构
 typedef struct _Judge {
-
+	
+	//判定点的显示位置
 	int x = 181 + 50;
 	int y = 214 + 50;
+	//不同判定等级的各个区间
 	int hit_great = 33;
 	int hit_normal = 50;
-	int hit_time;
-	bool type;
+	int hit_time;//击中时刻点
+	bool type;//判定类型
 	IMAGE point;
 	IMAGE hit300;
 	IMAGE hit300_Mask;
@@ -57,16 +64,18 @@ typedef struct _Judge {
 	IMAGE hit100_Mask;
 }_Judge;
 
+//定义小人的结构
 typedef struct _Don {
-
+	
+	//显示位置
 	int x = 14;
 	int y = 87;
-	int next_Action;
-	int next_Draw;
-	float frequency;
-	int status;
-	IMAGE idle[12];
-	IMAGE fail[4];
+	int next_Action;//下一次的动作
+	int next_Draw;//下一次绘制时间点
+	float frequency;//行动频率
+	int status;//行动状态
+	IMAGE idle[12];//空闲时的素材
+	IMAGE fail[4];//漏击时的素材
 }_Don;
 
 _Slider Slider[Slider_Number];
@@ -75,9 +84,11 @@ _Judge Judge;
 _Don Don;
 _ScoreBoard ScoreBoard;
 
+//得到当前的时间和游戏开始时间，是游戏运行的关键变量
 SYSTEMTIME current_Time;
 SYSTEMTIME Start_Time;
 
+//必要素材的变量定义和引入
 IMAGE red;
 IMAGE blue;
 IMAGE normal;
@@ -85,7 +96,6 @@ extern IMAGE number[12];
 extern IMAGE number_Mask[12];
 extern IMAGE rank[6];
 extern IMAGE rank_Mask[6];
-
 
 extern _Setting Setting;
 extern IMAGE Press, Press_Mask;
@@ -99,40 +109,39 @@ extern int musicAddress_Length;
 extern char Input;
 extern bool isAuto;
 
-int Current = 0;
-int current_Note;
-int current_Timing;
-int last_Slider;
-int passed_Mileseconds;
-int station;
-int last_Input = 0;
-int note_y = Judge.y + 13;
-int drawHit;
-int currentHit;
-int nextInput;
-int count_Down;
-float note_Speed;
+int Current = 0;//当前的谱面编号
+int current_Note;//当前的音符编号
+int current_Timing;//当前的时间点编号
+int last_Slider;//记录最后的滑条的x轴位置
+int passed_Mileseconds;//当前经过的时间长度，单位是毫秒
+int station;//时间站点
+int last_Input = 0;//最后一次输入的时间点
+int note_y = Judge.y + 13;//音符的y轴位置
+int drawHit;//根据位置记录输入类型
+int currentHit;//根据颜色记录输入类型
+int count_Down;//倒计时
+float note_Speed;//音符移动的标准速度，对应100bpm
 
-bool first = true;
-bool isKeyDown = false;
-bool canInput[4];
-bool isPlay;
-bool isEnd;
+bool first = true;//初始化标志
+bool canInput[4];//限制输入，防止过度响应
+bool isPlay;//游玩标志
+bool isEnd;//结束标志
 
 extern void PlayMusicOnce(char*, int);
 extern int GetLength(char*);
 extern char* CutAddress(char*, int);
 
-int GetActualTime();
+int GetActualTime();//更新时间
 
-void Playing();
-void Auto_Playing();
-void Show();
-void UpdateWithoutInput();
-void Auto_Update();
-void UpdateWithInput();
+void Playing();//游玩
+void Auto_Playing();//自动验奏
+void Show();//显示
+void UpdateWithoutInput();//无需输入的数据更新
+void Auto_Update();//自动演奏时的数据更新
+void UpdateWithInput();//接收输入时的数据更新
 
-void StartUp();
+void StartUp();//程序启动后的加载
+//加载对应素材
 void Load_BackGround();
 void Load_Bar();
 void Load_Judge();
@@ -143,31 +152,33 @@ void Load_Cursor();
 void Load_Auto();
 void Load_End();
 
-void First();
+void First();//初始化函数
+//初始化各个变量的数据
 void Initialize_Slider();
 void Initialize_Note();
-void Search_Timing(int i);
+void Search_Timing(int i);//搜寻合适的时间点
 void Initialize_Judge();
 void Initialize_Key();
 void Initialize_Don();
 void Initialize_ScoreBoard();
-void PlayMusic();
+void PlayMusic();//播放对应的音乐
 
-void Count_Down();
-void ReleaseKey();
-void Slider_Move();
-void Act_Note();
-void Note_Move();
-void Put_Judge();
-void Auto_Put_Judge();
-void Update_Current_Timing();
-void Update_Don_Frequency();
-void Update_Accuarcy();
-void Update_MaxCombo();
-void ComboSetZero();
-void Update_Don();
-void GetComboLength();
+void Count_Down();//倒计时
+void ReleaseKey();//释放按键
+void Slider_Move();//滑条的左移
+void Act_Note();//使能音符
+void Note_Move();//音符的左移
+void Put_Judge();//给出判定
+void Auto_Put_Judge();//自动演奏时的给出判定
+void Update_Current_Timing();//更新当前的时间点
+void Update_Don_Frequency();//更新小人的动作频率
+void Update_Accuarcy();//更新准确度
+void Update_MaxCombo();//更新最大连击
+void ComboSetZero();//连击置零
+void Update_Don();//更新小人的数据
+void GetComboLength();//得到连击数的长度
 
+//在相应的位置绘制相应的数据和素材
 void Draw_Slider();
 void Draw_Bar();
 void Draw_Combo();
@@ -177,9 +188,9 @@ void Draw_Don();
 void DrawJudge(int);
 void DrawHit(int);
 
-void End();
-void Get_Hit_Length();
-void Get_Rank();
+void End();//结束
+void Get_Hit_Length();//得到每级判定数的长度
+void Get_Rank();//得到对应的等级
 
 
 int main() {
@@ -212,6 +223,7 @@ int main() {
 int GetActualTime() {
 
 	GetLocalTime(&current_Time);
+	//当前经过的时间等于当前时间的毫秒数减去开始时间的毫秒数
 	passed_Mileseconds = ((current_Time.wMinute * 60 + current_Time.wSecond) * 1000 + current_Time.wMilliseconds)
 		- ((Start_Time.wMinute * 60 + Start_Time.wSecond) * 1000 + Start_Time.wMilliseconds);
 	return passed_Mileseconds;
@@ -220,9 +232,9 @@ int GetActualTime() {
 
 void StartUp() {
 
-	ReadMap(Current);
-	mciSendString("open ..\\Music\\Setting\\BackGround\\��������.mp3 alias backmusic", NULL, 0, NULL);
-	mciSendString("play backmusic repeat", NULL, 0, NULL);
+	ReadMap(Current);//从0号谱面开始读取谱面数据
+	mciSendString("open ..\\Music\\Setting\\BackGround\\ÓÄÐþ¥ÎÂÒ.mp3 alias backmusic", NULL, 0, NULL);//音乐名乱码了，正确显示为:幽玄ノ乱
+	mciSendString("play backmusic repeat", NULL, 0, NULL);//播放背景音乐
 
 	initgraph(Setting.resolution[Width],
 		Setting.resolution[Height]);
@@ -358,14 +370,15 @@ void Playing() {
 
 	if (first)
 		First();
-	if (_kbhit())
+	if (_kbhit())//只有接收到按键时才进行输入更新
 		UpdateWithInput();
 	UpdateWithoutInput();
 	Show();
 }
 
 void Auto_Playing() {
-
+	
+	//自动演奏不需要输入
 	if (first)
 		First();
 	Auto_Update();
@@ -380,11 +393,13 @@ void Show() {
 	Draw_Accuarcy();
 	Draw_Note();
 	Draw_Don();
-
+	
+	//当经过的时间减去上一次判定时间点的值小等于100毫秒时，绘制判定，也即是显示100毫秒的判定
 	if (passed_Mileseconds - Judge.hit_time <= 100
 		&& Judge.hit_time != 0)
 		DrawJudge(Judge.type);
-
+	
+	//当经过的时间减去上一次输入时间点的值小等于100毫秒时，绘制判定，也即是显示100毫秒的输入
 	if (passed_Mileseconds - last_Input <= 100)
 		DrawHit(drawHit);
 
@@ -394,12 +409,12 @@ void Show() {
 
 void UpdateWithoutInput() {
 
-	if (!isPlay)
+	if (!isPlay)//初进入游玩时进行倒计时，给一些准备时间
 		Count_Down();
 	ReleaseKey();
 	Slider_Move();
 
-	if (isPlay) {
+	if (isPlay) {//倒计时结束后开始更新数据
 		GetActualTime();
 		Act_Note();
 		Note_Move();
@@ -408,7 +423,8 @@ void UpdateWithoutInput() {
 		Update_Current_Timing();
 		Update_Don();
 	}
-
+	
+	//如果当前
 	if (ScoreBoard.current_Changed == ScoreBoard.next_Change)
 		GetComboLength();
 }
