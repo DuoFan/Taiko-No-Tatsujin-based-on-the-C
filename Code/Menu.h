@@ -6,12 +6,14 @@
 #define Width 0
 #define Height 1
 
+//定义初始设置的结构
 typedef struct _Setting {
 
 	int resolution[2]{ 1024,768 }; 
 	IMAGE backGround;
 }_Setting;
 
+//定义光标的结构
 typedef struct _Cursor {
 
 	int x;
@@ -20,6 +22,7 @@ typedef struct _Cursor {
 	IMAGE img;
 }_Cursor;
 
+//定义分数的数字结构
 typedef struct _Score_Number {
 
 	int x;
@@ -27,31 +30,31 @@ typedef struct _Score_Number {
 	int value;
 }_Score_Number;
 
+//定义分数板结构
 typedef struct _ScoreBoard {
 
-	int combo;
-	int combo_Length;
-	int max_Combo;
+	int combo;//当前连击数
+	int combo_Length;//当前连击数长度
+	int max_Combo;//最大连击数
 	int max_Combo_Length;
-	int next_Change;
+	int next_Change;//下一次的连击数长度改变值
 	int current_Changed;
-	int accuracy_Length;
-	int hit300;
-	int hit300_Length;
-	int hit100;
+	int accuracy_Length;//精确度长度
+	int hit300;//满判定数量
+	int hit300_Length;//满判定长度
+	int hit100;//半判定
 	int hit100_Length;
-	int hitMiss;
+	int hitMiss;//漏键
 	int hitMiss_Length;
-	int Rank;
-	float max_Weight = 100;
+	int Rank;//结算等级
+	float max_Weight = 100;//满判定权重
 	float half_Weight = 50;
 	float miss_Weight = 0;
 	float accuracy;
-	bool accuracy_Break;
-	_Score_Number* number;
+	bool accuracy_Break;//精确度破坏标志
+	_Score_Number* number;//数字数组
 }_ScoreBoard;
 
-void StartMenu();
-void ChooseMenu();
-void EndMenu();
-void PauseMenu();
+void StartMenu();//开始菜单
+void ChooseMenu();//选取菜单
+void EndMenu();//结算菜单
