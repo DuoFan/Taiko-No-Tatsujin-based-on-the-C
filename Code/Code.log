@@ -1,0 +1,26 @@
+﻿  Map.cpp
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\Map.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\Map.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  Menu.cpp
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\Menu.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\Menu.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\Map.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\Menu.cpp(281,19): warning C4244: “初始化”: 从“float”转换到“int”，可能丢失数据
+  方案1.cpp
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\Menu.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\Map.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  方案2.cpp
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\方案2.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\Menu.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\Map.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\方案2.cpp(825,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\方案2.cpp(926,30): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\方案2.cpp(976,19): warning C4244: “初始化”: 从“float”转换到“int”，可能丢失数据
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\方案2.cpp(999,33): warning C4244: “参数”: 从“float”转换到“int”，可能丢失数据
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\方案2.cpp(1001,34): warning C4244: “参数”: 从“float”转换到“int”，可能丢失数据
+F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\方案2.cpp(1003,34): warning C4244: “参数”: 从“float”转换到“int”，可能丢失数据
+  正在生成代码
+  Previous IPDB not found, fall back to full compilation.
+  All 131 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  已完成代码的生成
+  Code.vcxproj -> F:\Taiko-No-Tatsujin-based-on-the-C-main\Code\x64\Release\Code.exe
